@@ -32,7 +32,7 @@ const renderProductos = () =>{
         <div class="card-body">
           <h5 class="card-title">${producto.nombre}</h5>
           <h4 class="card-text">$${producto.precio}</h4>
-          <a href="#" class="btn btn-success" onclick="agregarAlCarrito(${producto.id})" >Agregar al Carro</a>
+          <a href="#" class="btn btn-success" onclick="agregarProductoCarrito(${producto.id})" >Agregar al Carro</a>
         </div>
         </div>
       </div>`
@@ -43,18 +43,35 @@ const renderProductos = () =>{
 
 const renderCarrito = () =>{
     const productos = cargarCarritoLS();
-    console.log(productos);
-    let contenidoHTML = `<table class="table">`;
+    let contenidoHTML;
+    if(cantProductosCarrito()>0){
+        contenidoHTML = `<table class="table">`;
 
     productos.forEach(producto => {
         contenidoHTML += `<tr>
         <td><img src="${producto.imagen}" alt="${producto.nombre}" width="32"></td>
-        <td>${producto.nombre}</td>
-        <td>${producto.precio}</td>
-        <td><img src="../../After3/assets/Icon/trash-fill (1).svg" class="card-img-top" alt="Eliminar" widht="24"></td>
+        <td class="align-items-center">${producto.nombre}</td>
+        <td class="align-items-center">$${producto.precio}  <button class="btn btn-warning rounded-circle" onclick="decrementarCantidadProducto(${producto.id})">-</button>${ producto.cantidad }<button class="btn btn-warning rounded-circle" onclick="incrementarCantidadProducto(${producto.id})"> + </button></td>
+        <td class="align-items-center">$${producto.precio * producto.cantidad}</td>
+        <td><img src="../../After3/assets/Icon/trash-fill (1).svg" class="card-img-top" alt="Eliminar" widht="24" onclick="eliminarProductoCarrito(${producto.id})"></td>
         </tr>`
     });
-    contenidoHTML += `</table>`;
+
+    contenidoHTML += `<tr>
+    <td>Total</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td colspan="3" class="text-start"><b>$${sumaProductosCarrito()}</b></td>
+    <td>&nbsp;</td>
+    </tr>
+    </table>`;
+    }else{
+        contenidoHTML = `<div class="alert alert-warning my-5 text-center" role="alert">
+        No hay productos en el carrito
+      </div>`
+    }
+    
+    
     document.getElementById("contenido").innerHTML = contenidoHTML;
 }
 
@@ -67,12 +84,55 @@ const cargarCarritoLS = () =>{
 }
 
 
-const agregarAlCarrito = (id) =>{
+const agregarProductoCarrito = (id) =>{
     const carrito = cargarCarritoLS();
-    let producto = buscarProducto(id);
-    carrito.push(producto);
-    guardarCarritoLS(carrito);
+    
 
+    if(estaEnElCarrito(id)){
+        const producto = carrito.find(item => item.id === id);
+        producto.cantidad += 1;
+    }else{
+        const producto = buscarProducto(id);
+        producto.cantidad = 1;
+        carrito.push(producto);
+    }
+    
+    
+    guardarCarritoLS(carrito);
+    renderBotonCarrito();
+
+
+}
+
+const eliminarProductoCarrito = (id) =>{
+    const carrito = cargarCarritoLS();
+    const nuevoCarrito = carrito.filter(item => item.id !== id);
+    guardarCarritoLS(nuevoCarrito);
+    renderBotonCarrito();
+    renderCarrito();
+}
+
+const incrementarCantidadProducto = (id) => {
+    const carrito = cargarCarritoLS();
+    const producto = carrito.find(item => item.id === id);
+        producto.cantidad += 1;
+        guardarCarritoLS(carrito);
+        renderCarrito();
+        renderBotonCarrito();
+    
+}
+
+const decrementarCantidadProducto = (id) => {
+    const carrito = cargarCarritoLS();
+    const producto = carrito.find(item => item.id === id);
+    if(producto.cantidad > 1){
+        producto.cantidad -= 1;
+        guardarCarritoLS(carrito);
+        renderCarrito();
+        renderBotonCarrito();
+    }else{
+        eliminarProductoCarrito(id);
+    }
 }
 
 const buscarProducto = (id) => {
@@ -81,7 +141,24 @@ const buscarProducto = (id) => {
     return producto;
 }
 
+
 const estaEnElCarrito = (id) =>{
-    const productos = cargarProductosLS();
+    const productos = cargarCarritoLS();
     return productos.some(item => item.id === id);
 }
+
+const cantProductosCarrito = () =>{
+    const carrito = cargarCarritoLS();
+    return carrito.reduce((acomulador,item) => acomulador += item.cantidad,0);
+}
+
+const sumaProductosCarrito = () =>{
+    const carrito = cargarCarritoLS();
+    return carrito.reduce((acomulador,item) => acomulador += item.precio * item.cantidad,0);
+}
+
+const renderBotonCarrito = () =>{
+   let totalCarrito =  document.getElementById("totalCarrito");
+   totalCarrito.innerHTML = cantProductosCarrito();
+}
+
