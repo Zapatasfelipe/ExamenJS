@@ -72,7 +72,7 @@ const renderCarrito = () => {
                 <td class="align-items-center">${producto.nombre}</td>
                 <td class="align-items-center">$${producto.precio} <button class="btn btn-warning rounded-circle" onclick="decrementarCantidadProducto(${producto.id})">-</button>${producto.cantidad}<button class="btn btn-warning rounded-circle" onclick="incrementarCantidadProducto(${producto.id})"> + </button></td>
                 <td class="align-items-center">$${producto.precio * producto.cantidad}</td>
-                <td><img src="/EntregaFinalJS/assets/Icon/trash-fill.svg" class="card-img-top" alt="Eliminar" width="24" onclick="eliminarProductoCarrito(${producto.id})"></td>
+                <td><img src="../assets/Icon/trash-fill.svg" class="card-img-top" alt="Eliminar" width="24" onclick="eliminarProductoCarrito(${producto.id})"></td>
             </tr>`;
         });
 
