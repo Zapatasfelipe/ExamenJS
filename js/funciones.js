@@ -10,6 +10,7 @@
         console.error('Error al realizar la solicitud:', error);
     }); */
 
+    
 let productos = [
     { id: 1, nombre: "Smartphone Redmi A1 32GB/2GB Verde Liberado", color: "verde", ram: 4, precio: 250000, categoria: "Celular", imagen: "https://www.pcfactory.cl/public/foto/48014/1_1000.jpg?t=1688054349284" },
     { id: 2, nombre: "Smartphone Moto E13 64GB/2GB Verde Wom", color: "azul", ram: 6, precio: 300000, categoria: "Celular", imagen: "https://www.pcfactory.cl/public/foto/47806/1_1000.jpg?t=1695987488412" },
